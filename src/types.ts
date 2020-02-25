@@ -5,19 +5,24 @@ import * as graphql from 'graphql'
 
 import { convertForUpdate } from './validation'
 
+/** Entfernt die Markierung einer Typdefinition als optional. */
+type XOmitNullable<T> = T extends infer T1 & { nullable?: never } ? T1 : T
+
 /** Ermittelt zu einer Typdefinition den zugehörigen JavaScript Datentyp. */
-export type TGqlType<TGql> = TGql extends GqlBase<infer TItem, infer TFilter, infer TLayout> ? TItem : never
+export type TGqlType<TGql> = XOmitNullable<TGql> extends GqlBase<infer TItem, infer TFilter, infer TLayout>
+    ? TItem
+    : never
 
 /** Die Arten von Filterbedingungen. */
 export type TGqlFilterTypes = 'string' | 'int' | 'float' | 'boolean' | 'enum' | 'object' | 'unknown'
 
 /** Ermittelt zu einer Typdefinition die zugehörige Filterbeschreibung. */
-export type TGqlFilterType<TGql> = TGql extends GqlBase<infer TItem, infer TFilter, infer TLayout> ? TFilter : never
+export type TGqlFilterType<TGql> = XOmitNullable<TGql> extends GqlBase<infer TItem, infer TFilter, infer TLayout>
+    ? TFilter
+    : never
 
 /** Ermittelt zu einer Typdefinition die zugehörige Filterbeschreibung. */
-export type TGqlLayoutType<TGql> = TGql extends GqlRecord<infer TItem, infer TLayout>
-    ? TLayout
-    : TGql extends GqlBase<infer TItem, infer TFilter, infer TLayout>
+export type TGqlLayoutType<TGql> = XOmitNullable<TGql> extends GqlBase<infer TItem, infer TFilter, infer TLayout>
     ? TLayout
     : never
 
