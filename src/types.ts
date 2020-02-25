@@ -6,11 +6,7 @@ import * as graphql from 'graphql'
 import { convertForUpdate } from './validation'
 
 /** Ermittelt zu einer Typdefinition den zugehörigen JavaScript Datentyp. */
-export type TGqlType<TGql> = TGql extends GqlRecord<infer TItem, infer TLayout>
-    ? TItem
-    : TGql extends GqlBase<infer TItem, infer TFilter, infer TLayout>
-    ? TItem
-    : never
+export type TGqlType<TGql> = TGql extends GqlBase<infer TItem, infer TFilter, infer TLayout> ? TItem : never
 
 /** Die Arten von Filterbedingungen. */
 export type TGqlFilterTypes = 'string' | 'int' | 'float' | 'boolean' | 'enum' | 'object' | 'unknown'
