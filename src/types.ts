@@ -9,7 +9,9 @@ import { convertForUpdate } from './validation'
 type XOmitNullable<T> = T extends infer T1 & { nullable?: never } ? T1 : T
 
 /** Ermittelt zu einer Typdefinition den zugehörigen JavaScript Datentyp. */
-export type TGqlType<TGql> = XOmitNullable<TGql> extends GqlBase<infer TItem, infer TFilter, infer TLayout>
+export type TGqlType<TGql> = XOmitNullable<TGql> extends GqlRecord<infer TItem, infer TLayout>
+    ? TItem
+    : XOmitNullable<TGql> extends GqlBase<infer TItem, infer TFilter, infer TLayout>
     ? TItem
     : never
 
@@ -22,7 +24,9 @@ export type TGqlFilterType<TGql> = XOmitNullable<TGql> extends GqlBase<infer TIt
     : never
 
 /** Ermittelt zu einer Typdefinition die zugehörige Filterbeschreibung. */
-export type TGqlLayoutType<TGql> = XOmitNullable<TGql> extends GqlBase<infer TItem, infer TFilter, infer TLayout>
+export type TGqlLayoutType<TGql> = XOmitNullable<TGql> extends GqlRecord<infer TItem, infer TLayout>
+    ? TLayout
+    : XOmitNullable<TGql> extends GqlBase<infer TItem, infer TFilter, infer TLayout>
     ? TLayout
     : never
 
