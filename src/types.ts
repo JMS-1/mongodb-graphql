@@ -9,7 +9,7 @@ import { convertForUpdate } from './validation'
 type XOmitNullable<T> = T extends infer T1 & { nullable?: never } ? T1 : T
 
 /** Ermittelt zu einer Typdefinition den zugehörigen JavaScript Datentyp. */
-export type TGqlType<TGql> = XOmitNullable<TGql> extends GqlRecord<infer TItem, infer TLayout>
+export type TGqlType<TGql> = XOmitNullable<TGql> extends GqlRecord<infer TItem, infer TLayout, infer TFilter>
     ? TItem
     : XOmitNullable<TGql> extends GqlBase<infer TItem, infer TFilter, infer TLayout>
     ? TItem
@@ -19,12 +19,14 @@ export type TGqlType<TGql> = XOmitNullable<TGql> extends GqlRecord<infer TItem, 
 export type TGqlFilterTypes = 'string' | 'int' | 'float' | 'boolean' | 'enum' | 'object' | 'unknown'
 
 /** Ermittelt zu einer Typdefinition die zugehörige Filterbeschreibung. */
-export type TGqlFilterType<TGql> = XOmitNullable<TGql> extends GqlBase<infer TItem, infer TFilter, infer TLayout>
+export type TGqlFilterType<TGql> = XOmitNullable<TGql> extends GqlRecord<infer TItem, infer TLayout, infer TFilter>
+    ? TFilter
+    : XOmitNullable<TGql> extends GqlBase<infer TItem, infer TFilter, infer TLayout>
     ? TFilter
     : never
 
 /** Ermittelt zu einer Typdefinition die zugehörige Filterbeschreibung. */
-export type TGqlLayoutType<TGql> = XOmitNullable<TGql> extends GqlRecord<infer TItem, infer TLayout>
+export type TGqlLayoutType<TGql> = XOmitNullable<TGql> extends GqlRecord<infer TItem, infer TLayout, infer TFilter>
     ? TLayout
     : XOmitNullable<TGql> extends GqlBase<infer TItem, infer TFilter, infer TLayout>
     ? TLayout
@@ -338,7 +340,11 @@ function getNamedTypes(root: graphql.GraphQLType, types: INamedTypeMap): void {
 }
 
 /** Hilfsklasse zur Beschreibung von Typdefinitionen von reinen (DTO) Objekten. */
-export class GqlRecord<TItem, TLayout> extends GqlBase<TItem, 'object', TLayout> {
+export class GqlRecord<TItem, TLayout, TFilter extends TGqlFilterTypes = 'object'> extends GqlBase<
+    TItem,
+    TFilter,
+    TLayout
+> {
     /** Der ursprüngliche GraphQL Typ zum Anlegen neuer Informationen. */
     get graphQLInputType(): graphql.GraphQLInputObjectType {
         return this._graphQLInputType as graphql.GraphQLInputObjectType
@@ -531,7 +537,7 @@ function createObject<TLayout extends IGqlObjectLayout>(
         name: `${name}Update`,
     })
 
-    return new GqlRecord<TGqlObject<TLayout>, TLayout>(
+    return new GqlRecord<TGqlObject<TLayout>, TLayout, 'object'>(
         { ...options, validation: noValidation ? { type: 'object' } : validation },
         sort.length > 0 && sort,
         type,
@@ -587,7 +593,7 @@ const SortDirection = GqlEnum('SortDirection', TSortDirection)
  *
  * @param type Die Typdefinition für die eine Sortierung erstellt werden soll.
  */
-export function GqlSort<TItem, TLayout>(type: GqlRecord<TItem, TLayout>) {
+export function GqlSort<TItem, TFilter extends TGqlFilterTypes, TLayout>(type: GqlRecord<TItem, TLayout, TFilter>) {
     /** Das macht nur Sinn, wenn es tatsächlich sortierbare Fehler gibt.*/
     const sortable = type.sortable
 

@@ -41,6 +41,12 @@ export type TGetFilterArgs<T extends Collection<any, any>, TOp extends keyof T> 
     filter?: TGqlFilter<T['model']>
 }
 
+/** Ermittelt den JavaScript Datentyp für Aktualisierungen. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TGetUpdateArgs<T extends Collection<any, any>, TOp extends keyof T> = {
+    [field in keyof TGetMethodArgs<T, TOp>]?: TGetMethodArgs<T, TOp>[field]
+}
+
 /** Ermittelt den JavaScript Datentyp für den Rückgabewert einer Methode. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type TGetMethodResult<T extends Collection<any, any>, TOp extends keyof T> = T[TOp] extends IMethodRegistration<
