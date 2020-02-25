@@ -1,0 +1,33 @@
+{
+    "author": "Dr. Jochen Manns <vcrnet-1@psimarron.net>",
+    "dependencies": {
+        "fastest-validator": "^1.0.2",
+        "graphql": "^14.6.0",
+        "mongodb": "^3.5.3",
+        "uuid": "^7.0.0"
+    },
+    "description": "Experimental MongoDb GraphQL Mapper with extensive TypeScript Support",
+    "devDependencies": {
+        "@insynergie/eslint-config": "^1.2.1",
+        "@insynergie/prettier-config": "^1.0.0",
+        "@types/mongodb": "^3.3.16",
+        "@types/uuid": "^3.4.7",
+        "rimraf": "^3.0.2",
+        "typescript": "^3.8.2",
+        "vfile-message": "^2.0.2"
+    },
+    "eslintConfig": {
+        "extends": "@insynergie"
+    },
+    "license": "MIT",
+    "main": "lib/index.js",
+    "name": "@jms-1/mongodb-graphql",
+    "prettier": "@insynergie/prettier-config",
+    "repository": "git@github.com:JMS-1/mongodb-graphql.git",
+    "scripts": {
+        "build": "rimraf lib && tsc",
+        "watch": "rimraf lib && tsc -watch"
+    },
+    "typings": "lib/index.d.ts",
+    "version": "0.1.1"
+}

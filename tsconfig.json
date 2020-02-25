@@ -1,0 +1,22 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "declaration": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": true,
+        "inlineSources": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noEmitOnError": true,
+        "noImplicitAny": true,
+        "noUnusedLocals": true,
+        "outDir": "lib",
+        "removeComments": true,
+        "sourceMap": true,
+        "strictPropertyInitialization": false,
+        "target": "es2017"
+    },
+    "exclude": ["node_modules"],
+    "include": ["src/**/*.ts"]
+}
