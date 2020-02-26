@@ -4,9 +4,9 @@ import { Collection } from './collection'
 import * as types from './types'
 
 /** Beschreibt den Konstruktor für eine MongoDb Anbindung. */
-interface ICollectionFactory<TItem extends { _id: string }, TLayout> {
+interface ICollectionFactory<TItem, TLayout> {
     /** Erstellt eine neue Anbindung für eine einzelne Typdefinition. */
-    new (model: types.GqlRecord<TItem, TLayout>, connection: Connection): Collection<TItem, TLayout>
+    new (model: types.GqlRecord<TItem, TLayout>, connection: Connection): Collection<typeof model>
 }
 
 /** Verwaltet die Verbindung zu einer einzelnen MongoDb Datenbank. */
@@ -35,10 +35,10 @@ export class Connection {
      * @param factory Methode zum Erstellen der Anbindung - die dann direkt mit der
      * hier verwalteten MongoDb Datenbank verbunden wird.
      */
-    createCollection<TItem extends { _id: string }, TLayout>(
+    createCollection<TItem, TLayout>(
         model: types.GqlRecord<TItem, TLayout>,
         factory: ICollectionFactory<TItem, TLayout>
-    ): Collection<TItem, TLayout> {
+    ): Collection<typeof model> {
         return new factory(model, this)
     }
 }

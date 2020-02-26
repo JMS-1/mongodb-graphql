@@ -7,7 +7,7 @@ import { QueryManager, MutationManager } from './methods'
 import * as types from './types'
 
 /** Basisklasse zur Implementierung einer Anbindung an eine MongoDb Datenbank. */
-export abstract class Collection<TItem extends { _id: string }, TLayout> {
+export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
     /** Der Name der zugehörigen Collection (Tabelle). */
     abstract readonly collectionName: string
 
@@ -237,3 +237,10 @@ export abstract class Collection<TItem extends { _id: string }, TLayout> {
         }
     )
 }
+
+/** Vereinfachte Klassendefinition für reguläre Entitäten (mit _id). */
+export abstract class Collection<
+    TModel extends types.GqlRecord<TItem, TLayout>,
+    TItem = types.TGqlType<TModel>,
+    TLayout = types.TGqlLayoutType<TModel>
+> extends CollectionBase<TItem extends { _id: string } ? TItem : never, TLayout> {}
