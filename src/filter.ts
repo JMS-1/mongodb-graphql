@@ -66,17 +66,17 @@ export function createObjectFilter(type: graphql.GraphQLObjectType, outer = '') 
         undefined,
         true,
         !outer &&
-            ((fields, mode, type) => {
-                if (mode === 'input' && type.name === `${name}Input`) {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const anyFields: any = fields
+        ((fields, mode, type) => {
+            if (mode === 'input' && type.name === `${name}Input`) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const anyFields: any = fields
 
-                    anyFields.And = { type: new graphql.GraphQLList(new graphql.GraphQLNonNull(type)) }
-                    anyFields.Or = { type: new graphql.GraphQLList(new graphql.GraphQLNonNull(type)) }
-                }
+                anyFields.And = { type: new graphql.GraphQLList(new graphql.GraphQLNonNull(type)) }
+                anyFields.Or = { type: new graphql.GraphQLList(new graphql.GraphQLNonNull(type)) }
+            }
 
-                return fields
-            })
+            return fields
+        })
     )
 }
 
@@ -113,7 +113,7 @@ export function toMongoFilter(gqlFilter: unknown, scope = '', filter: FilterQuer
 
             switch (op as filterTypes.stringOperations) {
                 case 'Exists':
-                    fieldFilter.$exits = value !== false
+                    fieldFilter.$exists = value !== false
                     break
                 case 'Eq':
                     fieldFilter.$eq = value
