@@ -23,7 +23,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
      * @param model die zugehörige Typdefinition.
      * @param _connection die zu verwendende MongoDb Datenbank.
      */
-    constructor(public readonly model: types.GqlRecord<TItem, TLayout>, protected readonly _connection: Connection) {}
+    constructor(public readonly model: types.GqlRecord<TItem, TLayout>, protected readonly _connection: Connection) { }
 
     /** Ermittelt die zugehörige Collection (Tabelle). */
     get collection(): Promise<mongodb.Collection<TItem>> {
@@ -205,7 +205,9 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
             ),
             sort: types.GqlNullable(types.GqlSort(this.model)),
         },
-        types.GqlArray(this.model, { description: 'Alle Entitäten im angeforderten Ergebnisfenster.' }),
+        types.GqlObject(`Find${this.model.graphQLType.name}Result`, {
+            items: types.GqlArray(this.model, { description: 'Alle Entitäten im angeforderten Ergebnisfenster.' }),
+        }),
         'Freie Suche.',
         async args => {
             /** Ergebnisfenster ermitteln. */
@@ -233,7 +235,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
                 .toArray()
 
             /** Entitäten als GraphQL Ergebnis melden. */
-            return Promise.all(items.map(async i => await this.toGraphQL(i)))
+            return { items: await Promise.all(items.map(async i => await this.toGraphQL(i))) }
         }
     )
 }
@@ -243,4 +245,4 @@ export abstract class Collection<
     TModel extends types.GqlRecord<TItem, TLayout>,
     TItem = types.TGqlType<TModel>,
     TLayout = types.TGqlLayoutType<TModel>
-> extends CollectionBase<TItem extends { _id: string } ? TItem : never, TLayout> {}
+    > extends CollectionBase<TItem extends { _id: string } ? TItem : never, TLayout> { }
