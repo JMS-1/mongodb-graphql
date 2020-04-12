@@ -86,7 +86,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
     )
 
     /** Wird vor der Aktualisierung einer Entität aufgerufen. */
-    protected beforeUpdate?(item: Partial<TItem>): Promise<void>
+    protected beforeUpdate?(item: Partial<TItem>, _id: string): Promise<void>
 
     /** Wird nach der Aktualisierung einer Entität aufgerufen. */
     protected afterUpdate?(item: TItem): Promise<void>
@@ -106,7 +106,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
 
             /** Eingriff durch die abgeleitete Klasse erlauben. */
             if (this.beforeUpdate) {
-                await this.beforeUpdate(item)
+                await this.beforeUpdate(item, args._id)
             }
 
             /** Änderung durchführen. */
@@ -123,7 +123,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
 
             /** Eingriff durch die abgeleitete Klasse erlauben. */
             if (this.afterUpdate) {
-                await this.afterUpdate(item)
+                await this.afterUpdate(updated)
             }
 
             /** Veränderte Entität als GraphQL Ergebnis melden. */
