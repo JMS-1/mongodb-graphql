@@ -22,10 +22,10 @@ const validationResults = GqlArray(validationResult)
  *
  * @param collections alle zu verwendenden Arten von Entitäten in Form ihrer Zugriffsklassen.
  */
-export function createSchemaConfiguration(collections: {
+export async function createSchemaConfiguration(collections: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [qglName: string]: Collection<any, any>
-}): GraphQLSchemaConfig {
+    [qglName: string]: Promise<Collection<any, any>>
+}): Promise<GraphQLSchemaConfig> {
     /** Alle Prüfinformationen. */
     const validations: TGqlType<typeof validationResults> = []
 
@@ -48,7 +48,7 @@ export function createSchemaConfiguration(collections: {
 
     /** Alle Entitäten durchgehen. */
     for (const field of Object.keys(collections)) {
-        const collection = collections[field as keyof typeof collections]
+        const collection = await collections[field as keyof typeof collections]
         const { model } = collection
 
         /** Alle Suchoperationen. */

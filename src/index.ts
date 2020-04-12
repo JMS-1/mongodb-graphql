@@ -8,7 +8,13 @@ export {
     TGqlFilter,
 } from './filterTypes'
 
-export { IMethodRegistration, TGetFilterArgs, TGetMethodArgs, TGetMethodResult } from './methods'
+export {
+    IMethodRegistration,
+    TCollection,
+    TGetFilterArgs,
+    TGetMethodArgs,
+    TGetMethodResult,
+} from './methods'
 
 export {
     IGqlObjectLayout,

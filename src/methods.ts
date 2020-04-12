@@ -5,13 +5,16 @@ import { TGqlFilter } from './filterTypes'
 import { GqlRecord, TGqlObject, GqlBase, GqlArgs, TGqlFilterTypes, IGqlObjectLayout } from './types'
 import { validateAndThrow } from './validation'
 
+/** Ermittelt aus einem Promise den Parameter - hier nur für Collections genutzt. */
+export type TCollection<T> = T extends Promise<infer TCollection> ? TCollection : never
+
 /** Informationen zu einer registrierten GraphQL Operation. */
 export interface IMethodRegistration<
     TArgs extends IGqlObjectLayout,
     TResult,
     TFilter extends TGqlFilterTypes,
     TLayout
-> {
+    > {
     /** Die tatsächliche Ausführung bei Aufruf der Methode - eine Parameterprüfung hat bereits stattgefunden. */
     handler(args: TGqlObject<TArgs>): Promise<TResult>
     /** Layout für die Typdefinition der Parameter. */
@@ -75,7 +78,7 @@ abstract class MethodManager<TItem> {
         private readonly _scope: 'Query' | 'Mutation' | 'Subscription',
         private readonly _resolver: IDatabase<TItem>,
         private readonly _description?: string
-    ) {}
+    ) { }
 
     /** Meldet alle Operationen in der zugehörigen GraphQL Notation. */
     get methods(): GraphQLFieldConfig<unknown, unknown> {

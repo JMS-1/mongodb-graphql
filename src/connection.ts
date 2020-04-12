@@ -6,7 +6,7 @@ import * as types from './types'
 /** Beschreibt den Konstruktor für eine MongoDb Anbindung. */
 interface ICollectionFactory<TItem, TLayout> {
     /** Erstellt eine neue Anbindung für eine einzelne Typdefinition. */
-    new (model: types.GqlRecord<TItem, TLayout>, connection: Connection): Collection<typeof model>
+    new(model: types.GqlRecord<TItem, TLayout>, connection: Connection): Collection<typeof model>
 }
 
 /** Verwaltet die Verbindung zu einer einzelnen MongoDb Datenbank. */
@@ -16,7 +16,7 @@ export class Connection {
      *
      * @param _client Eine geeignet konfigurierte Verbindung.
      */
-    constructor(private readonly _client: Promise<mongodb.MongoClient>) {}
+    constructor(private readonly _client: Promise<mongodb.MongoClient>) { }
 
     /** Meldet die aktuelle Datenbank. */
     get database(): Promise<mongodb.Db> {
@@ -35,10 +35,15 @@ export class Connection {
      * @param factory Methode zum Erstellen der Anbindung - die dann direkt mit der
      * hier verwalteten MongoDb Datenbank verbunden wird.
      */
-    createCollection<TItem, TLayout>(
+    async createCollection<TItem, TLayout>(
         model: types.GqlRecord<TItem, TLayout>,
         factory: ICollectionFactory<TItem, TLayout>
-    ): Collection<typeof model> {
-        return new factory(model, this)
+    ): Promise<Collection<typeof model>> {
+        const collection = new factory(model, this)
+
+        /** Immer sobald als möglich initialisieren. */
+        await collection.initialize()
+
+        return collection
     }
 }

@@ -25,6 +25,13 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
      */
     constructor(public readonly model: types.GqlRecord<TItem, TLayout>, protected readonly _connection: Connection) { }
 
+    /**
+     * Wird einmalig zur Initialisierung aufgerufen. Hier können zum Beispiel Index angelegt werden.
+     */
+    initialize(): Promise<void> {
+        return Promise.resolve<void>(undefined)
+    }
+
     /** Ermittelt die zugehörige Collection (Tabelle). */
     get collection(): Promise<mongodb.Collection<TItem>> {
         return this._connection.getCollection(this.collectionName)
