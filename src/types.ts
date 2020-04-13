@@ -131,7 +131,7 @@ type TRelaxedRule<TRule, TRuleType extends string> = { [field in keyof TRule]?: 
 
 /** Beschreibung der Prüfinformationen für eine bestimmte Typdefinition. */
 export interface IGqlOptions<TRule, TRuleType extends string>
-    extends IGqlOptionsCommon<TRelaxedRule<TRule, TRuleType>> {}
+    extends IGqlOptionsCommon<TRelaxedRule<TRule, TRuleType>> { }
 
 /** Typdefinition für eine Zeichenkette. */
 export function GqlString(
@@ -344,7 +344,7 @@ export class GqlRecord<TItem, TLayout, TFilter extends TGqlFilterTypes = 'object
     TItem,
     TFilter,
     TLayout
-> {
+    > {
     /** Der ursprüngliche GraphQL Typ zum Anlegen neuer Informationen. */
     get graphQLInputType(): graphql.GraphQLInputObjectType {
         return this._graphQLInputType as graphql.GraphQLInputObjectType
@@ -585,7 +585,7 @@ export enum TSortDirection {
 }
 
 /** Typdefinition für die möglichen Sortierungen. */
-const SortDirection = GqlEnum('SortDirection', TSortDirection)
+export const SortDirection = GqlEnum('SortDirection', TSortDirection)
 
 /**
  * Erstellt eine Typdefinition für die Sortierung nach einer Liste von

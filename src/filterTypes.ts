@@ -3,7 +3,7 @@
 import * as types from './types'
 
 /** Einschränkende Operationen, die für alle Datentypen angeboten werden. */
-export type standardOperations = 'Eq' | 'Exists' | 'Gt' | 'Gte' | 'Lt' | 'Lte' | 'Neq' | 'In' | 'Nin'
+export type standardOperations = 'Eq' | 'Exists' | 'Gt' | 'Gte' | 'Lt' | 'Lte' | 'Neq' | 'In' | 'Nin' | 'All'
 
 /** Einschränkende Operationen für Zeichenketten. */
 export type stringOperations = standardOperations | 'RegEx'
@@ -59,10 +59,10 @@ export type IStringFilter = types.TGqlType<typeof GqlStringFilter>
 /** Hilfstyp zum Erzeugen der Standardoperationen auf einer Aufzählung. */
 type TMakeStandardEnumFilter<TEnum> = {
     [field in keyof IIntFilter]?: IIntFilter[field] extends number
-        ? TEnum
-        : IIntFilter[field] extends number[]
-        ? TEnum[]
-        : IIntFilter[field]
+    ? TEnum
+    : IIntFilter[field] extends number[]
+    ? TEnum[]
+    : IIntFilter[field]
 }
 
 /** Hilfsklasse zum Erstellen einer Beschreibung eines Filters */

@@ -136,6 +136,9 @@ export function toMongoFilter(gqlFilter: unknown, scope = '', filter: FilterQuer
                 case 'In':
                     fieldFilter.$in = value || []
                     break
+                case 'All':
+                    fieldFilter.$all = value || []
+                    break
                 case 'Nin':
                     fieldFilter.$nin = value || []
                     break
