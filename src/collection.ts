@@ -21,9 +21,9 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
      * Initialisiert eine neue Anbindung.
      *
      * @param model die zugehörige Typdefinition.
-     * @param _connection die zu verwendende MongoDb Datenbank.
+     * @param connection die zu verwendende MongoDb Datenbank.
      */
-    constructor(public readonly model: types.GqlRecord<TItem, TLayout>, protected readonly _connection: Connection) { }
+    constructor(public readonly model: types.GqlRecord<TItem, TLayout>, readonly connection: Connection) { }
 
     /**
      * Wird einmalig zur Initialisierung aufgerufen. Hier können zum Beispiel Index angelegt werden.
@@ -34,7 +34,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
 
     /** Ermittelt die zugehörige Collection (Tabelle). */
     get collection(): Promise<mongodb.Collection<TItem>> {
-        return this._connection.getCollection(this.collectionName)
+        return this.connection.getCollection(this.collectionName)
     }
 
     /**
@@ -43,7 +43,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
      *
      * @param item Eine Entität aus der Datenbank.
      */
-    protected async toGraphQL(item: TItem): Promise<TItem> {
+    async toGraphQL(item: TItem): Promise<TItem> {
         return item
     }
 
@@ -52,14 +52,14 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
      *
      * @param item die neu einzufügende Entität.
      */
-    protected beforeInsert?(item: TItem): Promise<void>
+    beforeInsert?(item: TItem): Promise<void>
 
     /**
      * Wir unmittelbar nach dem Einfügen einer neuen Entität in die Datenbank aufgerufen.
      *
      * @param item  die neu eingefügte Entität.
      */
-    protected afterInsert?(item: TItem): Promise<void>
+    afterInsert?(item: TItem): Promise<void>
 
     /** Informationen zur Registrierung der Methode zum Anlegen einer neuen Entität. */
     readonly add = this.mutations.register(
@@ -93,10 +93,10 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
     )
 
     /** Wird vor der Aktualisierung einer Entität aufgerufen. */
-    protected beforeUpdate?(item: Partial<TItem>, _id: string): Promise<void>
+    beforeUpdate?(item: Partial<TItem>, _id: string): Promise<void>
 
     /** Wird nach der Aktualisierung einer Entität aufgerufen. */
-    protected afterUpdate?(item: TItem): Promise<void>
+    afterUpdate?(item: TItem): Promise<void>
 
     /** Informationen zur Registrierung der Methode zum Ändern einer vorhandenen Entität. */
     readonly update = this.mutations.registerUpdate(
@@ -139,10 +139,10 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
     )
 
     /** Wird unmittelbar vor dem Löschen einer Entität aufgerufen. */
-    protected beforeRemove?(_id: string): Promise<void>
+    beforeRemove?(_id: string): Promise<void>
 
     /** Wird unmittelbar nach dem erfolgreichen Löschen einer Entität aufgerufen. */
-    protected afterRemove?(item: TItem): Promise<void>
+    afterRemove?(item: TItem): Promise<void>
 
     /** Informationen zur Registrierung der Methode zum Entfernen einer Entitäten, */
     readonly remove = this.mutations.register(

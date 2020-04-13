@@ -4,9 +4,9 @@ import { Collection } from './collection'
 import * as types from './types'
 
 /** Beschreibt den Konstruktor für eine MongoDb Anbindung. */
-interface ICollectionFactory<TItem, TLayout> {
+interface ICollectionFactory<TItem, TLayout, TCollection extends Collection<types.GqlRecord<TItem, TLayout>>> {
     /** Erstellt eine neue Anbindung für eine einzelne Typdefinition. */
-    new(model: types.GqlRecord<TItem, TLayout>, connection: Connection): Collection<typeof model>
+    new(model: types.GqlRecord<TItem, TLayout>, connection: Connection): TCollection
 }
 
 /** Verwaltet die Verbindung zu einer einzelnen MongoDb Datenbank. */
@@ -35,10 +35,10 @@ export class Connection {
      * @param factory Methode zum Erstellen der Anbindung - die dann direkt mit der
      * hier verwalteten MongoDb Datenbank verbunden wird.
      */
-    async createCollection<TItem, TLayout>(
+    async createCollection<TItem, TLayout, TCollection extends Collection<types.GqlRecord<TItem, TLayout>> = Collection<types.GqlRecord<TItem, TLayout>>>(
         model: types.GqlRecord<TItem, TLayout>,
-        factory: ICollectionFactory<TItem, TLayout>
-    ): Promise<Collection<typeof model>> {
+        factory: ICollectionFactory<TItem, TLayout, TCollection>
+    ): Promise<TCollection> {
         const collection = new factory(model, this)
 
         /** Immer sobald als möglich initialisieren. */
