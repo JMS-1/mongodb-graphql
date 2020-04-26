@@ -341,3 +341,4 @@ export type IBookRemoveResult = TGetMethodResult<typeof BookCollection, 'remove'
 
 [Server](https://github.com/JMS-1/mongodb-graphql-server-sample)
 [Client](https://github.com/JMS-1/mongodb-graphql-client-sample)
+[Filmdatenbank (Server & Client)](https://github.com/JMS-1/MovieDBNode)
