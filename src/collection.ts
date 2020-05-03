@@ -5,6 +5,7 @@ import { Connection } from './connection'
 import { createObjectFilter, toMongoFilter } from './filter'
 import { QueryManager, MutationManager } from './methods'
 import * as types from './types'
+import { TSortDirection } from './enum'
 
 /** Basisklasse zur Implementierung einer Anbindung an eine MongoDb Datenbank. */
 export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
@@ -225,7 +226,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
             const sort: Record<string, 1 | -1> = {}
 
             for (const sortField of args.sort || []) {
-                sort[sortField.field] = sortField.direction === types.TSortDirection.Ascending ? 1 : -1
+                sort[sortField.field] = sortField.direction === TSortDirection.Ascending ? 1 : -1
             }
 
             /** Stabile Sortierung auf unterester Ebene erzwingen. */
