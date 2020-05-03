@@ -4,6 +4,7 @@ import * as validator from 'fastest-validator'
 import * as graphql from 'graphql'
 
 import { convertForUpdate } from './validation'
+import { TSortDirection } from './enum'
 
 /** Entfernt die Markierung einer Typdefinition als optional. */
 type XOmitNullable<T> = T extends infer T1 & { nullable?: never } ? T1 : T
@@ -576,12 +577,6 @@ export function GqlArgs<TLayout extends IGqlObjectLayout>(
     options?: IGqlOptions<validator.RuleObject, 'object'>
 ) {
     return createObject(true, '', item, options)
-}
-
-/** Die möglichen Sortierungen. */
-export enum TSortDirection {
-    'Ascending' = 1,
-    'Descending' = -1,
 }
 
 /** Typdefinition für die möglichen Sortierungen. */

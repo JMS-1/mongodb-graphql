@@ -1,3 +1,5 @@
+export * from "./enum"
+
 export {
     IBoolFilter,
     IFloatFilter,
@@ -26,3 +28,4 @@ export {
     TGqlObject,
     TGqlType,
 } from './types'
+
