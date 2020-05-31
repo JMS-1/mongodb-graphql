@@ -41,6 +41,11 @@ export class Connection {
     ): Promise<TCollection> {
         const collection = new factory(model, this)
 
+        /** Erst einmal erzeugen. */
+        const db = await this.database
+
+        await db.createCollection(collection.collectionName)
+
         /** Immer sobald als möglich initialisieren. */
         await collection.initialize()
 

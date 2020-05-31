@@ -91,7 +91,7 @@ export function toMongoFilter(gqlFilter: unknown, scope = '', filter: FilterQuer
 
         if (isAnd || field === 'Or') {
             /** Alle Suchbedingungen auswerten. */
-            const subs = (ops || []).map(f => toMongoFilter(f, scope))
+            const subs = ((ops as any) || []).map((f: any) => toMongoFilter(f, scope))
 
             /** Eine Berücksichtigung ist nur notwendig wenn mindestens eine Einschränkung. */
             if (subs.length > 0) {
