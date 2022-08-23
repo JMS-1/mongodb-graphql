@@ -5,7 +5,7 @@ import { Collection } from './collection'
 import { GqlArgs, GqlObject, GqlString, GqlArray, TGqlType } from './types'
 
 /** Parameterliste für das Abfragen aller Prüfinformationen. */
-const validationArgs = GqlArgs({})
+const validationArgs = GqlArgs('global_args', {})
 
 /** Prüfinformationen für eine einzelne Entität. */
 const validationResult = GqlObject('ValidationInformation', {
@@ -66,7 +66,7 @@ export async function createSchemaConfiguration(collections: {
         }
 
         /** Alle GraphQL Typen. */
-        model.graphQLTypes.forEach(t => (types[t.name] = t))
+        model.graphQLTypes.forEach((t) => (types[t.name] = t))
 
         /** Und schließlich die Prüfinformationen. */
         validations.push({

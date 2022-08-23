@@ -579,10 +579,11 @@ export function GqlObject<TLayout extends IGqlObjectLayout>(
  * @param options Optionale Feineinstellungen für die Typdefinition.
  */
 export function GqlArgs<TLayout extends IGqlObjectLayout>(
+    name: string,
     item: TLayout,
     options?: IGqlOptions<validator.RuleObject, 'object'>
 ) {
-    return createObject(true, '', item, options)
+    return createObject(true, name, item, options)
 }
 
 /** Typdefinition für die möglichen Sortierungen. */

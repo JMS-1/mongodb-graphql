@@ -14,7 +14,7 @@ export interface IMethodRegistration<
     TResult,
     TFilter extends TGqlFilterTypes,
     TLayout
-    > {
+> {
     /** Die tatsächliche Ausführung bei Aufruf der Methode - eine Parameterprüfung hat bereits stattgefunden. */
     handler(args: TGqlObject<TArgs>): Promise<TResult>
     /** Layout für die Typdefinition der Parameter. */
@@ -78,7 +78,7 @@ abstract class MethodManager<TItem> {
         private readonly _scope: 'Query' | 'Mutation' | 'Subscription',
         private readonly _resolver: IDatabase<TItem>,
         private readonly _description?: string
-    ) { }
+    ) {}
 
     /** Meldet alle Operationen in der zugehörigen GraphQL Notation. */
     get methods(): GraphQLFieldConfig<unknown, unknown> {
@@ -162,7 +162,7 @@ abstract class MethodManager<TItem> {
         processor: (args: TGqlObject<TArgs>) => Promise<TResult>
     ): IMethodRegistration<TArgs, TResult, TFilter, TLayout> {
         /** Datentyp für die formalen Parameter anlegen. */
-        const argsType = GqlArgs(args)
+        const argsType = GqlArgs(`${name}_args`, args)
 
         /** Registrierung anlegen und in die Verwaltung eintragen. */
         const proxy: IMethodRegistration<TArgs, TResult, TFilter, TLayout> = {
