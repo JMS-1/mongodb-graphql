@@ -2,7 +2,7 @@
 
 import { RuleCustom } from 'fastest-validator'
 import * as graphql from 'graphql'
-import { FilterQuery } from 'mongodb'
+import { Filter } from 'mongodb'
 
 import * as filterTypes from './filterTypes'
 import * as types from './types'
@@ -66,22 +66,22 @@ export function createObjectFilter(type: graphql.GraphQLObjectType, outer = '') 
         undefined,
         true,
         !outer &&
-        ((fields, mode, type) => {
-            if (mode === 'input' && type.name === `${name}Input`) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const anyFields: any = fields
+            ((fields, mode, type) => {
+                if (mode === 'input' && type.name === `${name}Input`) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const anyFields: any = fields
 
-                anyFields.And = { type: new graphql.GraphQLList(new graphql.GraphQLNonNull(type)) }
-                anyFields.Or = { type: new graphql.GraphQLList(new graphql.GraphQLNonNull(type)) }
-            }
+                    anyFields.And = { type: new graphql.GraphQLList(new graphql.GraphQLNonNull(type)) }
+                    anyFields.Or = { type: new graphql.GraphQLList(new graphql.GraphQLNonNull(type)) }
+                }
 
-            return fields
-        })
+                return fields
+            })
     )
 }
 
 /** Erstellt aus einem formalen Filter Parameter die zugehörige MongoDB Beschreibung. */
-export function toMongoFilter(gqlFilter: unknown, scope = '', filter: FilterQuery<unknown> = {}): FilterQuery<unknown> {
+export function toMongoFilter(gqlFilter: unknown, scope = '', filter: any = {}): Filter<unknown> {
     for (const field of Object.keys(gqlFilter || {})) {
         /** Das betroffene Feld. */
         const ops = gqlFilter[field as keyof typeof gqlFilter]
@@ -105,7 +105,7 @@ export function toMongoFilter(gqlFilter: unknown, scope = '', filter: FilterQuer
         const fullName = `${scope}${scope ? '.' : ''}${field}`
 
         /** Zu jedem Feld die Suchoperation übersetzen. */
-        const fieldFilter: FilterQuery<unknown> = {}
+        const fieldFilter: any = {}
 
         for (const op of Object.keys(ops || {})) {
             /** Abhängig vom Namen der Operation im Filter umsetzen. */

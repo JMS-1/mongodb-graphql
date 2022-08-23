@@ -24,7 +24,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
      * @param model die zugehörige Typdefinition.
      * @param connection die zu verwendende MongoDb Datenbank.
      */
-    constructor(public readonly model: types.GqlRecord<TItem, TLayout>, readonly connection: Connection) { }
+    constructor(public readonly model: types.GqlRecord<TItem, TLayout>, readonly connection: Connection) {}
 
     /**
      * Wird einmalig zur Initialisierung aufgerufen. Hier können zum Beispiel Index angelegt werden.
@@ -68,7 +68,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
         { data: this.model },
         this.model,
         'Entität hinzufügen.',
-        async args => {
+        async (args) => {
             /** Eindeutige Kennung automatisch erstellen. */
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const added = { ...(args.data as any), _id: uuid() }
@@ -105,9 +105,9 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
         { _id: types.GqlId(), data: this.model },
         this.model,
         'Entität aktualisieren.',
-        async args => {
+        async (args) => {
             /** Suche der betroffenen Entität vorbereiten. */
-            const filter = { _id: args._id } as mongodb.FilterQuery<TItem>
+            const filter = { _id: args._id } as mongodb.Filter<TItem>
 
             /** Änderung vorbereiten. */
             const item = { ...args.data }
@@ -122,7 +122,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
 
             const updated =
                 Object.keys(args.data).length > 0
-                    ? (await self.findOneAndUpdate(filter, { $set: item }, { returnOriginal: false })).value
+                    ? (await self.findOneAndUpdate(filter, { $set: item as any }, { returnDocument: 'after' })).value
                     : await self.findOne(filter)
 
             if (!updated) {
@@ -131,11 +131,11 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
 
             /** Eingriff durch die abgeleitete Klasse erlauben. */
             if (this.afterUpdate) {
-                await this.afterUpdate(updated)
+                await this.afterUpdate(updated as TItem)
             }
 
             /** Veränderte Entität als GraphQL Ergebnis melden. */
-            return this.toGraphQL(updated)
+            return this.toGraphQL(updated as TItem)
         }
     )
 
@@ -151,7 +151,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
         { _id: types.GqlId() },
         this.model,
         'Entität entfernen.',
-        async args => {
+        async (args) => {
             /** Eingriff durch die abgeleitete Klasse erlauben. */
             if (this.beforeRemove) {
                 await this.beforeRemove(args._id)
@@ -160,7 +160,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
             /** Löschoperation in der Datenbank durchführen. */
             const self = await this.collection
 
-            const result = await self.findOneAndDelete({ _id: args._id } as mongodb.FilterQuery<TItem>)
+            const result = await self.findOneAndDelete({ _id: args._id } as mongodb.Filter<TItem>)
             const deleted = result.value
 
             if (!deleted) {
@@ -169,11 +169,11 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
 
             /** Eingriff durch die abgeleitete Klasse erlauben. */
             if (this.afterRemove) {
-                await this.afterRemove(deleted)
+                await this.afterRemove(deleted as TItem)
             }
 
             /** Entfernte Entität als GraphQL Ergebnis melden. */
-            return this.toGraphQL(deleted)
+            return this.toGraphQL(deleted as TItem)
         }
     )
 
@@ -183,14 +183,14 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
         { _id: types.GqlId() },
         this.model,
         'Einzelne Entität suchen.',
-        async args => {
+        async (args) => {
             /** In der Datenbank nachschlagen. */
             const self = await this.collection
 
-            const item = await self.findOne({ _id: args._id } as mongodb.FilterQuery<TItem>)
+            const item = await self.findOne({ _id: args._id } as mongodb.Filter<TItem>)
 
             /** Entität als GraphQL Ergebnis melden. */
-            return item && this.toGraphQL(item)
+            return item && this.toGraphQL(item as TItem)
         }
     )
 
@@ -217,7 +217,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
             items: types.GqlArray(this.model, { description: 'Alle Entitäten im angeforderten Ergebnisfenster.' }),
         }),
         'Freie Suche.',
-        async args => {
+        async (args) => {
             /** Ergebnisfenster ermitteln. */
             const pageSize = args.pageSize || 100
             const pageOffset = (args.page || 1) - 1
@@ -243,7 +243,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
                 .toArray()
 
             /** Entitäten als GraphQL Ergebnis melden. */
-            return { items: await Promise.all(items.map(async i => await this.toGraphQL(i))) }
+            return { items: await Promise.all(items.map(async (i) => await this.toGraphQL(i as TItem))) }
         }
     )
 }
@@ -253,4 +253,4 @@ export abstract class Collection<
     TModel extends types.GqlRecord<TItem, TLayout>,
     TItem = types.TGqlType<TModel>,
     TLayout = types.TGqlLayoutType<TModel>
-    > extends CollectionBase<TItem extends { _id: string } ? TItem : never, TLayout> { }
+> extends CollectionBase<TItem extends { _id: string } ? TItem : never, TLayout> {}

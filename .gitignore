@@ -1,6 +1,9 @@
-node_modules
-yarn.lock
-yarn-error.log
-.npmrc
+/node_modules
+/yarn.lock
+/yarn-error.log
+/.npmrc
 
 /lib
+
+/.yarn/*
+!/.yarn/releases

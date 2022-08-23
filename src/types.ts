@@ -132,7 +132,7 @@ type TRelaxedRule<TRule, TRuleType extends string> = { [field in keyof TRule]?: 
 
 /** Beschreibung der Prüfinformationen für eine bestimmte Typdefinition. */
 export interface IGqlOptions<TRule, TRuleType extends string>
-    extends IGqlOptionsCommon<TRelaxedRule<TRule, TRuleType>> { }
+    extends IGqlOptionsCommon<TRelaxedRule<TRule, TRuleType>> {}
 
 /** Typdefinition für eine Zeichenkette. */
 export function GqlString(
@@ -202,7 +202,11 @@ export function GqlEnum<TKey extends string, TValue>(
     return new GqlBase<TValue | TKey, 'enum'>(
         {
             ...options,
-            validation: { ...options?.validation, type: 'enum', values: Object.keys(values).map(k => values[k].value) },
+            validation: {
+                ...options?.validation,
+                type: 'enum',
+                values: Object.keys(values).map((k) => values[k].value),
+            },
         },
         options?.sortable === true,
         type
@@ -345,7 +349,7 @@ export class GqlRecord<TItem, TLayout, TFilter extends TGqlFilterTypes = 'object
     TItem,
     TFilter,
     TLayout
-    > {
+> {
     /** Der ursprüngliche GraphQL Typ zum Anlegen neuer Informationen. */
     get graphQLInputType(): graphql.GraphQLInputObjectType {
         return this._graphQLInputType as graphql.GraphQLInputObjectType
@@ -369,7 +373,7 @@ export class GqlRecord<TItem, TLayout, TFilter extends TGqlFilterTypes = 'object
         getNamedTypes(this._graphQLInputType, types)
         getNamedTypes(this._graphQLUpdateType, types)
 
-        return Object.keys(types).map(name => types[name])
+        return Object.keys(types).map((name) => types[name])
     }
 
     /** Unsere persönliche Prüfinstanz. */
@@ -411,7 +415,9 @@ export class GqlRecord<TItem, TLayout, TFilter extends TGqlFilterTypes = 'object
     /** Ein beliebiges Objekt gegen die Prüfregeln validieren. */
     validate(item: TItem, forUpdate?: boolean): validator.ValidationError[] | true {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return this._validator.validate(item as any, forUpdate ? this.updateValidation : this.validation)
+        return this._validator.validate(item as any, forUpdate ? this.updateValidation : this.validation) as
+            | validator.ValidationError[]
+            | true
     }
 }
 
@@ -472,7 +478,7 @@ function createObject<TLayout extends IGqlObjectLayout>(
 
         if (sortable) {
             if (Array.isArray(sortable)) {
-                sort.push(...sortable.map(f => `${field}.${f}`))
+                sort.push(...sortable.map((f) => `${field}.${f}`))
             } else {
                 sort.push(field)
             }
