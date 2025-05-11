@@ -24,7 +24,10 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
      * @param model die zugehörige Typdefinition.
      * @param connection die zu verwendende MongoDb Datenbank.
      */
-    constructor(public readonly model: types.GqlRecord<TItem, TLayout>, readonly connection: Connection) {}
+    constructor(
+        public readonly model: types.GqlRecord<TItem, TLayout>,
+        readonly connection: Connection
+    ) {}
 
     /**
      * Wird einmalig zur Initialisierung aufgerufen. Hier können zum Beispiel Index angelegt werden.
@@ -122,7 +125,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
 
             const updated =
                 Object.keys(args.data).length > 0
-                    ? (await self.findOneAndUpdate(filter, { $set: item as any }, { returnDocument: 'after' })).value
+                    ? await self.findOneAndUpdate(filter, { $set: item as any }, { returnDocument: 'after' })
                     : await self.findOne(filter)
 
             if (!updated) {
@@ -160,8 +163,7 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
             /** Löschoperation in der Datenbank durchführen. */
             const self = await this.collection
 
-            const result = await self.findOneAndDelete({ _id: args._id } as mongodb.Filter<TItem>)
-            const deleted = result.value
+            const deleted = await self.findOneAndDelete({ _id: args._id } as mongodb.Filter<TItem>)
 
             if (!deleted) {
                 throw new Error('item not found')
@@ -252,5 +254,5 @@ export abstract class CollectionBase<TItem extends { _id: string }, TLayout> {
 export abstract class Collection<
     TModel extends types.GqlRecord<TItem, TLayout>,
     TItem = types.TGqlType<TModel>,
-    TLayout = types.TGqlLayoutType<TModel>
+    TLayout = types.TGqlLayoutType<TModel>,
 > extends CollectionBase<TItem extends { _id: string } ? TItem : never, TLayout> {}
